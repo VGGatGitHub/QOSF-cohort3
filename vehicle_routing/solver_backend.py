@@ -1,6 +1,7 @@
 import hybrid
 import dwave.inspector
 
+from greedy import SteepestDescentSolver
 from dwave.system import DWaveSampler, EmbeddingComposite
 from qiskit.optimization.algorithms import MinimumEigenOptimizer
 from qiskit.aqua.algorithms import QAOA
@@ -28,11 +29,18 @@ class SolverBackend:
         # Resolve parameters
         params['solver'] = 'dwave'
         inspect = params.setdefault('inspect', False)
+        post_process = params.setdefault('post_process', False)
 
         # Solve
         sampler = EmbeddingComposite(DWaveSampler())
-        self.vrp.result = sampler.sample(self.vrp.bqm, num_reads=self.vrp.num_reads,
-                                         chain_strength=self.vrp.chain_strength)
+        result = sampler.sample(self.vrp.bqm, num_reads=self.vrp.num_reads, chain_strength=self.vrp.chain_strength)
+
+        # Post process
+        if not post_process:
+            self.vrp.result = result
+        else:
+            post_processor = SteepestDescentSolver()
+            self.vrp.result = post_processor.sample(self.vrp.bqm, num_reads=self.vrp.num_reads, initial_states=result)
 
         # Extract solution
         result_dict = self.vrp.result.first.sample
@@ -40,7 +48,7 @@ class SolverBackend:
 
         # Inspection
         if inspect:
-            dwave.inspector.show(self.vrp.result)
+            dwave.inspector.show(result)
 
     def solve_hybrid(self, **params):
 

@@ -1,8 +1,10 @@
 import numpy as np
 import dimod
 
-from qiskit.optimization.converters import InequalityToEquality, IntegerToBinary, LinearEqualityToPenalty
+from functools import partial
 from solver_backend import SolverBackend
+from dwave.embedding.chain_strength import uniform_torque_compensation
+from qiskit.optimization.converters import InequalityToEquality, IntegerToBinary, LinearEqualityToPenalty
 
 
 class VehicleRouter:
@@ -15,8 +17,8 @@ class VehicleRouter:
         self.c = np.array(cost_matrix)
 
         # Extract parameters
-        self.penalty = params.setdefault('constraint_penalty', 900)
-        self.chain_strength = params.setdefault('chain_strength', 1000)
+        self.penalty = params.setdefault('constraint_penalty', 1e5)
+        self.chain_strength = params.setdefault('chain_strength', partial(uniform_torque_compensation, prefactor=2))
         self.num_reads = params.setdefault('num_reads', 1000)
         self.solver = params.setdefault('solver', 'dwave')
 
