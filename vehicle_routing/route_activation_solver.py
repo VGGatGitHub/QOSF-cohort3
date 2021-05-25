@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from itertools import product
 from vehicle_routing import VehicleRouter
-from qiskit.optimization import QuadraticProgram
+from qiskit_optimization import QuadraticProgram
 
 
 class RouteActivationSolver(VehicleRouter):

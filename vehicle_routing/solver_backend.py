@@ -3,8 +3,8 @@ import dwave.inspector
 
 from greedy import SteepestDescentSolver
 from dwave.system import DWaveSampler, EmbeddingComposite
-from qiskit.optimization.algorithms import MinimumEigenOptimizer
-from qiskit.aqua.algorithms import QAOA
+from qiskit_optimization.algorithms import MinimumEigenOptimizer
+from qiskit.algorithms import QAOA
 from qiskit import Aer
 
 

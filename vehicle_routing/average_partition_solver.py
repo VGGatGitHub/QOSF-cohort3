@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from collections import Counter
 from matplotlib.colors import rgb2hex
 from vehicle_routing import VehicleRouter
-from qiskit.optimization import QuadraticProgram
+from qiskit_optimization import QuadraticProgram
 
 
 class AveragePartitionSolver(VehicleRouter):

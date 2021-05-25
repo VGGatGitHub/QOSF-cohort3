@@ -4,7 +4,7 @@ import dimod
 from functools import partial
 from solver_backend import SolverBackend
 from dwave.embedding.chain_strength import uniform_torque_compensation
-from qiskit.optimization.converters import InequalityToEquality, IntegerToBinary, LinearEqualityToPenalty
+from qiskit_optimization.converters import QuadraticProgramToQubo
 
 
 class VehicleRouter:
@@ -40,19 +40,11 @@ class VehicleRouter:
         # Dummy. Override in child class.
         pass
 
-    def build_qubo(self):
-
-        # Create converters
-        converter_a = InequalityToEquality()
-        converter_b = IntegerToBinary()
-        converter_c = LinearEqualityToPenalty(penalty=self.penalty)
+    def build_bqm(self):
 
         # Convert to QUBO
-        self.qubo = converter_a.convert(self.qp)
-        self.qubo = converter_b.convert(self.qubo)
-        self.qubo = converter_c.convert(self.qubo)
-
-    def build_bqm(self):
+        converter = QuadraticProgramToQubo()
+        self.qubo = converter.convert(self.qp)
 
         # Extract qubo data
         Q = self.qubo.objective.quadratic.to_dict(use_name=True)
@@ -66,7 +58,6 @@ class VehicleRouter:
 
         # Rebuild quadratic models
         self.build_quadratic_program()
-        self.build_qubo()
         self.build_bqm()
 
     def extract_solution(self, result_dict):
@@ -105,6 +96,17 @@ class VehicleRouter:
         # Evaluate output
         cost = np.dot(g, x) + np.dot(np.dot(np.transpose(x), Q), x) + c
         return cost[0][0]
+
+    def evaluate_qubo_feasibility(self, data=None):
+
+        # Resolve data
+        if data is None:
+            data = self.solution.reshape(-1)
+        else:
+            data = np.array(data).reshape(-1)
+
+        # Get constraint violation data
+        return self.qp.get_feasibility_info(data)
 
     def solve(self, **params):
 
