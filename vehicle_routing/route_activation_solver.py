@@ -9,7 +9,7 @@ from qiskit_optimization import QuadraticProgram
 
 class RouteActivationSolver(VehicleRouter):
 
-    def __init__(self, n_clients=None, n_vehicles=None, cost_matrix=None, **params):
+    def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
 
         # Call parent initializer
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)

@@ -10,7 +10,7 @@ from qiskit_optimization import QuadraticProgram
 
 class AveragePartitionSolver(VehicleRouter):
 
-    def __init__(self, n_clients=None, n_vehicles=None, cost_matrix=None, **params):
+    def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
 
         # Extract parameters
         self.limit_radius = params.setdefault('limit_radius', 2)

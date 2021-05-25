@@ -1,8 +1,7 @@
 import numpy as np
 
 
-def generate_instance(n, seed=None):
-
+def generate_vrp_instance(n, seed=None):
     # Set seed
     if seed is not None:
         np.random.seed(seed)
@@ -18,3 +17,25 @@ def generate_instance(n, seed=None):
 
     # Return output
     return instance, xc, yc
+
+
+def generate_cvrp_instance(n, m, seed=None):
+
+    # Set seed
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Acquire vrp instance
+    instance, xc, yc = generate_vrp_instance(n)
+
+    # Generate capacity and demand
+    demands = np.random.rand(n) * 100
+    capacities = np.random.rand(m)
+    capacities = 4 * capacities * sum(demands) / sum(capacities)
+
+    # Floor data
+    demands = np.floor(demands)
+    capacities = np.floor(capacities)
+
+    # Return output
+    return instance, xc, yc, capacities, demands

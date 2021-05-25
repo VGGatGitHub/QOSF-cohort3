@@ -9,7 +9,7 @@ from qiskit_optimization.converters import QuadraticProgramToQubo
 
 class VehicleRouter:
 
-    def __init__(self, n_clients=None, n_vehicles=None, cost_matrix=None, **params):
+    def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
 
         # Store critical inputs
         self.n = n_clients
