@@ -17,7 +17,7 @@ class VehicleRouter:
         self.c = np.array(cost_matrix)
 
         # Extract parameters
-        self.penalty = params.setdefault('constraint_penalty', 1e5)
+        self.penalty = params.setdefault('constraint_penalty', None)
         self.chain_strength = params.setdefault('chain_strength', partial(uniform_torque_compensation, prefactor=2))
         self.num_reads = params.setdefault('num_reads', 1000)
         self.solver = params.setdefault('solver', 'dwave')
@@ -43,7 +43,7 @@ class VehicleRouter:
     def build_bqm(self):
 
         # Convert to QUBO
-        converter = QuadraticProgramToQubo()
+        converter = QuadraticProgramToQubo(penalty=self.penalty)
         self.qubo = converter.convert(self.qp)
 
         # Extract qubo data

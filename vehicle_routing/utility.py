@@ -29,7 +29,7 @@ def generate_cvrp_instance(n, m, seed=None):
     instance, xc, yc = generate_vrp_instance(n)
 
     # Generate capacity and demand
-    demands = np.random.rand(n) * 100
+    demands = np.random.rand(n) * 10
     capacities = np.random.rand(m)
     capacities = 4 * capacities * sum(demands) / sum(capacities)
 
