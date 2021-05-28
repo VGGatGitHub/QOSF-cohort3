@@ -13,7 +13,9 @@ class SolutionPartitionSolver(VehicleRouter):
     def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
 
         # Initialize cluster data
+        self.route = None
         self.start_indices = None
+        self.end_indices = None
 
         # Call parent initializer
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
@@ -54,8 +56,24 @@ class SolutionPartitionSolver(VehicleRouter):
         # Solve TSP
         super().solve(**params)
 
-        # Partition TSP solution
-        pass
+        # Evaluate route
+        var_list = self.variables.reshape(-1)
+        sol_list = self.solution.reshape(-1)
+        active_vars = [var_list[k] for k in range(len(var_list)) if sol_list[k] == 1]
+        self.route = [int(var.split('.')[1]) for var in active_vars]
+
+        # Evaluate partition costs
+        partition_costs = np.zeros(self.n - 1)
+        for i in range(self.n - 1):
+            partition_costs[i] = self.c[self.route[i], 0] + self.c[0, self.route[i + 1]] - \
+                                 self.c[self.route[i], self.route[i + 1]]
+
+        # Evaluate minimum cost partition
+        cut_indices = np.argsort(partition_costs)[:(self.m - 1)]
+        self.start_indices = np.sort(cut_indices) + 1
+        self.start_indices = [0] + list(self.start_indices)
+        self.end_indices = np.sort(cut_indices)
+        self.end_indices = list(self.end_indices) + [self.n - 1]
 
     def visualize(self, xc=None, yc=None):
 
@@ -80,18 +98,16 @@ class SolutionPartitionSolver(VehicleRouter):
         nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='b', node_size=500, alpha=0.8)
         nx.draw_networkx_labels(G, pos=pos, labels=labels, font_size=16)
 
-        # Evaluate active variables
-        var_list = self.variables.reshape(-1)
-        sol_list = self.solution.reshape(-1)
-        active_vars = [var_list[k] for k in range(len(var_list)) if sol_list[k] == 1]
+        # Loop through cars
+        for i in range(self.m):
 
-        # Get route
-        route = [int(var.split('.')[1]) for var in active_vars]
+            # Extract edge list
+            route = [self.route[j] for j in range(self.start_indices[i], self.end_indices[i] + 1)]
+            edgelist = [(0, route[0])] + [(route[j], route[j + 1]) for j in range(len(route) - 1)] + [(route[-1], 0)]
 
-        # Plot edges
-        edgelist = [(0, route[0])] + [(route[j], route[j + 1]) for j in range(len(route) - 1)] + [(route[-1], 0)]
-        G.add_edges_from(edgelist)
-        nx.draw_networkx_edges(G, pos=pos, edgelist=edgelist, width=2, edge_color='r')
+            # Plot edges
+            G.add_edges_from(edgelist)
+            nx.draw_networkx_edges(G, pos=pos, edgelist=edgelist, width=2, edge_color='r')
 
         # Show plot
         plt.grid(True)
