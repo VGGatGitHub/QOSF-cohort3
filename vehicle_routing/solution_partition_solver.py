@@ -34,9 +34,10 @@ class SolutionPartitionSolver(VehicleRouter):
 
         # Build objective function
         edgelist = [(i, j) for i, j in product(range(1, self.n + 1), repeat=2) if i != j]
-        obj_linear_a = {f'x.{i}.{1}': self.c[0, i] for i in range(1, self.n + 1)}
-        obj_linear_b = {f'x.{i}.{self.n}': self.c[i, 0] for i in range(1, self.n + 1)}
-        obj_quadratic = {(f'x.{i}.{t}', f'x.{j}.{t + 1}'): self.c[i, j] for i, j in edgelist for t in range(1, self.n)}
+        obj_linear_a = {f'x.{i}.{1}': self.cost[0, i] for i in range(1, self.n + 1)}
+        obj_linear_b = {f'x.{i}.{self.n}': self.cost[i, 0] for i in range(1, self.n + 1)}
+        obj_quadratic = {(f'x.{i}.{t}', f'x.{j}.{t + 1}'): self.cost[i, j] for i, j in edgelist
+                         for t in range(1, self.n)}
 
         # Add objective to quadratic program
         self.qp.minimize(linear=dict(Counter(obj_linear_a) + Counter(obj_linear_b)), quadratic=obj_quadratic)
@@ -65,8 +66,8 @@ class SolutionPartitionSolver(VehicleRouter):
         # Evaluate partition costs
         partition_costs = np.zeros(self.n - 1)
         for i in range(self.n - 1):
-            partition_costs[i] = self.c[self.route[i], 0] + self.c[0, self.route[i + 1]] - \
-                                 self.c[self.route[i], self.route[i + 1]]
+            partition_costs[i] = self.cost[self.route[i], 0] + self.cost[0, self.route[i + 1]] - \
+                                 self.cost[self.route[i], self.route[i + 1]]
 
         # Evaluate minimum cost partition
         cut_indices = np.argsort(partition_costs)[:(self.m - 1)]

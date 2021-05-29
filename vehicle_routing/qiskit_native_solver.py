@@ -21,7 +21,7 @@ class QiskitNativeSolver(VehicleRouter):
         G.add_nodes_from(list(range(self.n + 1)))
         edgelist = [(i, j) for i, j in product(range(self.n + 1), repeat=2) if i != j]
         for i, j in edgelist:
-            G.add_edge(i, j, weight=self.c[i, j])
+            G.add_edge(i, j, weight=self.cost[i, j])
 
         # Vehicle routing default quadratic program
         vrp = VehicleRouting(graph=G, num_vehicles=self.m, depot=0)

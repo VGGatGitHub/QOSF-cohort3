@@ -14,7 +14,7 @@ class VehicleRouter:
         # Store critical inputs
         self.n = n_clients
         self.m = n_vehicles
-        self.c = np.array(cost_matrix)
+        self.cost = np.array(cost_matrix)
 
         # Extract parameters
         self.penalty = params.setdefault('constraint_penalty', None)

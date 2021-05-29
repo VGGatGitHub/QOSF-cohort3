@@ -28,7 +28,7 @@ class RouteActivationSolver(VehicleRouter):
             self.qp.binary_var(name=var)
 
         # Add objective to quadratic program
-        obj_linear = {self.variables[k]: self.c[i, j] for k, (i, j) in enumerate(edgelist)}
+        obj_linear = {self.variables[k]: self.cost[i, j] for k, (i, j) in enumerate(edgelist)}
         self.qp.minimize(linear=obj_linear)
 
         # Add constraints - single delivery per client

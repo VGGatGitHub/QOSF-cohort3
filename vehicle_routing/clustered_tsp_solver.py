@@ -27,7 +27,7 @@ class ClusteredTspSolver(VehicleRouter):
         self.qp = QuadraticProgram(name='Vehicle Routing Problem')
 
         # Cluster nodes
-        self.cluster = NodeClustering(self.n, self.m, self.c[1:, 1:])
+        self.cluster = NodeClustering(self.n, self.m, self.cost[1:, 1:])
         self.cluster.solve()
         self.cluster_dict = {i: [j + 1 for j in range(self.n) if self.cluster.solution[j] == i] for i in range(self.m)}
 
@@ -57,12 +57,12 @@ class ClusteredTspSolver(VehicleRouter):
             # Build quadratic terms
             for j, k in edgelist:
                 for t in range(1, len(node_list)):
-                    obj_quadratic[(f'x.{i}.{j}.{t}', f'x.{i}.{k}.{t + 1}')] = self.c[j, k]
+                    obj_quadratic[(f'x.{i}.{j}.{t}', f'x.{i}.{k}.{t + 1}')] = self.cost[j, k]
 
             # Build linear terms
             for j in node_list:
-                obj_linear_a[f'x.{i}.{j}.{1}'] = self.c[0, j]
-                obj_linear_b[f'x.{i}.{j}.{len(node_list)}'] = self.c[j, 0]
+                obj_linear_a[f'x.{i}.{j}.{1}'] = self.cost[0, j]
+                obj_linear_b[f'x.{i}.{j}.{len(node_list)}'] = self.cost[j, 0]
 
         # Add objective to quadratic program
         self.qp.minimize(linear=dict(Counter(obj_linear_a) + Counter(obj_linear_b)), quadratic=obj_quadratic)

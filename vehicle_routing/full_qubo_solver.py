@@ -29,9 +29,9 @@ class FullQuboSolver(VehicleRouter):
             self.qp.binary_var(name=var)
 
         # Build objective function
-        obj_linear_a = {self.variables[m, n, 0]: self.c[0, n] for m in range(self.m) for n in range(1, self.n + 1)}
-        obj_linear_b = {self.variables[m, n, -1]: self.c[n, 0] for m in range(self.m) for n in range(1, self.n + 1)}
-        obj_quadratic = {(self.variables[m, i, n], self.variables[m, j, n + 1]): self.c[i, j] for m in range(self.m)
+        obj_linear_a = {self.variables[m, n, 0]: self.cost[0, n] for m in range(self.m) for n in range(1, self.n + 1)}
+        obj_linear_b = {self.variables[m, n, -1]: self.cost[n, 0] for m in range(self.m) for n in range(1, self.n + 1)}
+        obj_quadratic = {(self.variables[m, i, n], self.variables[m, j, n + 1]): self.cost[i, j] for m in range(self.m)
                          for n in range(self.n - 1) for i in range(self.n + 1) for j in range(self.n + 1)}
 
         # Add objective to quadratic program
