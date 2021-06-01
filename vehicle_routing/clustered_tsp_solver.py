@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -23,13 +24,17 @@ class ClusteredTspSolver(VehicleRouter):
 
     def build_quadratic_program(self):
 
-        # Initialization
-        self.qp = QuadraticProgram(name='Vehicle Routing Problem')
-
         # Cluster nodes
         self.cluster = NodeClustering(self.n, self.m, self.cost[1:, 1:])
         self.cluster.solve()
         self.cluster_dict = {i: [j + 1 for j in range(self.n) if self.cluster.solution[j] == i] for i in range(self.m)}
+
+        # Record cluster timing and reinitialize clock
+        self.timing['clustering_time'] = self.cluster.result.info
+        self.clock = time.time()
+
+        # Initialization
+        self.qp = QuadraticProgram(name='Vehicle Routing Problem')
 
         # Designate variable names
         self.variables = []

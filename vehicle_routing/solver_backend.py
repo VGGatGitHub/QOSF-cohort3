@@ -1,3 +1,4 @@
+import time
 import hybrid
 import dwave.inspector
 
@@ -45,6 +46,7 @@ class SolverBackend:
             self.vrp.result = post_processor.sample(self.vrp.bqm, num_reads=self.vrp.num_reads, initial_states=result)
 
         # Extract solution
+        self.vrp.timing.update(result.info["timing"])
         result_dict = self.vrp.result.first.sample
         self.vrp.extract_solution(result_dict)
 
@@ -84,6 +86,7 @@ class SolverBackend:
         self.vrp.result = sampler.sample(self.vrp.bqm)
 
         # Extract solution
+        self.vrp.timing.update(self.vrp.result.info)
         result_dict = self.vrp.result.first.sample
         self.vrp.extract_solution(result_dict)
 
@@ -91,11 +94,13 @@ class SolverBackend:
 
         # Resolve parameters
         params['solver'] = 'qaoa'
+        self.vrp.clock = time.time()
 
         # Build optimizer and solve
         solver = QAOA(quantum_instance=Aer.get_backend('qasm_simulator'))
         optimizer = MinimumEigenOptimizer(min_eigen_solver=solver)
         self.vrp.result = optimizer.solve(self.vrp.qp)
+        self.vrp.timing['qaoa_solution_time'] = (time.time() - self.vrp.clock) * 1e6
 
         # Build result dictionary
         result_dict = {self.vrp.result.variable_names[i]: self.vrp.result.x[i]

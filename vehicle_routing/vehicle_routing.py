@@ -1,5 +1,6 @@
 import numpy as np
 import dimod
+import time
 
 from functools import partial
 from solver_backend import SolverBackend
@@ -32,6 +33,10 @@ class VehicleRouter:
         self.result = None
         self.solution = None
 
+        # Initialize timer
+        self.clock = None
+        self.timing = {}
+
         # Build quadratic models
         self.rebuild()
 
@@ -56,9 +61,15 @@ class VehicleRouter:
 
     def rebuild(self):
 
+        # Begin stopwatch
+        self.clock = time.time()
+
         # Rebuild quadratic models
         self.build_quadratic_program()
         self.build_bqm()
+
+        # Record build time
+        self.timing['qubo_build_time'] = (time.time() - self.clock) * 1e6
 
     def extract_solution(self, result_dict):
 
