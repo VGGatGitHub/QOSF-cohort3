@@ -2,6 +2,7 @@ import hybrid
 import dwave.inspector
 
 from greedy import SteepestDescentSolver
+from dwave.system import LeapHybridSampler
 from dwave.system import DWaveSampler, EmbeddingComposite
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit.algorithms import QAOA
@@ -15,6 +16,7 @@ class SolverBackend:
         # Store relevant data
         self.vrp = vrp
         self.solvers = {'dwave': self.solve_dwave,
+                        'leap': self.solve_leap,
                         'hybrid': self.solve_hybrid,
                         'qaoa': self.solve_qaoa}
 
@@ -67,6 +69,19 @@ class SolverBackend:
         sampler = hybrid.HybridSampler(workflow)
         self.vrp.result = sampler.sample(self.vrp.bqm, num_reads=self.vrp.num_reads,
                                          chain_strength=self.vrp.chain_strength)
+
+        # Extract solution
+        result_dict = self.vrp.result.first.sample
+        self.vrp.extract_solution(result_dict)
+
+    def solve_leap(self, **params):
+
+        # Resolve parameters
+        params['solver'] = 'leap'
+
+        # Solve
+        sampler = LeapHybridSampler()
+        self.vrp.result = sampler.sample(self.vrp.bqm)
 
         # Extract solution
         result_dict = self.vrp.result.first.sample
