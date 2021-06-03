@@ -16,10 +16,16 @@ class SolverBackend:
 
         # Store relevant data
         self.vrp = vrp
+
+        # Solver dictionary
         self.solvers = {'dwave': self.solve_dwave,
                         'leap': self.solve_leap,
                         'hybrid': self.solve_hybrid,
                         'qaoa': self.solve_qaoa}
+
+        # Initialize necessary variables
+        self.dwave_result = None
+        self.result_dict = None
 
     def solve(self, solver, **params):
 
@@ -47,10 +53,11 @@ class SolverBackend:
 
         # Extract solution
         self.vrp.timing.update(result.info["timing"])
-        result_dict = self.vrp.result.first.sample
-        self.vrp.extract_solution(result_dict)
+        self.result_dict = self.vrp.result.first.sample
+        self.vrp.extract_solution(self.result_dict)
 
         # Inspection
+        self.dwave_result = result
         if inspect:
             dwave.inspector.show(result)
 
@@ -73,8 +80,8 @@ class SolverBackend:
                                          chain_strength=self.vrp.chain_strength)
 
         # Extract solution
-        result_dict = self.vrp.result.first.sample
-        self.vrp.extract_solution(result_dict)
+        self.result_dict = self.vrp.result.first.sample
+        self.vrp.extract_solution(self.result_dict)
 
     def solve_leap(self, **params):
 
@@ -87,8 +94,8 @@ class SolverBackend:
 
         # Extract solution
         self.vrp.timing.update(self.vrp.result.info)
-        result_dict = self.vrp.result.first.sample
-        self.vrp.extract_solution(result_dict)
+        self.result_dict = self.vrp.result.first.sample
+        self.vrp.extract_solution(self.result_dict)
 
     def solve_qaoa(self, **params):
 
@@ -103,8 +110,8 @@ class SolverBackend:
         self.vrp.timing['qaoa_solution_time'] = (time.time() - self.vrp.clock) * 1e6
 
         # Build result dictionary
-        result_dict = {self.vrp.result.variable_names[i]: self.vrp.result.x[i]
-                       for i in range(len(self.vrp.result.variable_names))}
+        self.result_dict = {self.vrp.result.variable_names[i]: self.vrp.result.x[i]
+                            for i in range(len(self.vrp.result.variable_names))}
 
         # Extract solution
-        self.vrp.extract_solution(result_dict)
+        self.vrp.extract_solution(self.result_dict)

@@ -37,6 +37,9 @@ class VehicleRouter:
         self.clock = None
         self.timing = {}
 
+        # Initialize backend
+        self.backend = SolverBackend(self)
+
         # Build quadratic models
         self.rebuild()
 
@@ -125,5 +128,4 @@ class VehicleRouter:
         params.setdefault('solver', self.solver)
 
         # Solve
-        backend = SolverBackend(self)
-        backend.solve(**params)
+        self.backend.solve(**params)
