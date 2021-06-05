@@ -10,12 +10,18 @@ from qiskit_optimization import QuadraticProgram
 
 class FullQuboSolver(VehicleRouter):
 
+    """FQS Solver implementation."""
+
     def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
+
+        """Initializes any required variables and calls init of super class."""
 
         # Call parent initializer
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
 
     def build_quadratic_program(self):
+
+        """Builds the required quadratic program and sets the names of variables in self.variables."""
 
         # Initialization
         self.qp = QuadraticProgram(name='Vehicle Routing Problem')
@@ -50,6 +56,12 @@ class FullQuboSolver(VehicleRouter):
                                           name=f'single_location_{m + 1}_{n + 1}')
 
     def visualize(self, xc=None, yc=None):
+
+        """Visualizes solution.
+        Args:
+            xc: x coordinates of nodes. Defaults to random values.
+            yc: y coordinates of nodes. Defaults to random values.
+        """
 
         # Resolve coordinates
         if xc is None:

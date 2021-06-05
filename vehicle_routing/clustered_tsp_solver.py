@@ -13,7 +13,11 @@ from qiskit_optimization import QuadraticProgram
 
 class ClusteredTspSolver(VehicleRouter):
 
+    """CTS Solver implementation."""
+
     def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
+
+        """Initializes any required variables and calls init of super class."""
 
         # Initialize cluster data
         self.cluster = None
@@ -23,6 +27,9 @@ class ClusteredTspSolver(VehicleRouter):
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
 
     def build_quadratic_program(self):
+
+        """Builds the required quadratic program and sets the names of variables in self.variables. Also runs
+        clustering prior to building quadratic program."""
 
         # Cluster nodes
         self.cluster = NodeClustering(self.n, self.m, self.cost[1:, 1:])
@@ -87,6 +94,12 @@ class ClusteredTspSolver(VehicleRouter):
                 self.qp.linear_constraint(linear=constraint_linear, sense='==', rhs=1, name=f'single_location_{i}_{k}')
 
     def visualize(self, xc=None, yc=None):
+
+        """Visualizes solution.
+        Args:
+            xc: x coordinates of nodes. Defaults to random values.
+            yc: y coordinates of nodes. Defaults to random values.
+        """
 
         # Resolve coordinates
         if xc is None:

@@ -9,12 +9,18 @@ from qiskit_optimization.applications import VehicleRouting
 
 class QiskitNativeSolver(VehicleRouter):
 
+    """QNS Solver implementation."""
+
     def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
+
+        """Initializes any required variables and calls init of super class."""
 
         # Call parent initializer
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
 
     def build_quadratic_program(self):
+
+        """Builds the required quadratic program and sets the names of variables in self.variables."""
 
         # Build graph
         G = nx.Graph()
@@ -29,6 +35,12 @@ class QiskitNativeSolver(VehicleRouter):
         self.variables = np.array(list(self.qp.variables_index.keys()))
 
     def visualize(self, xc=None, yc=None):
+
+        """Visualizes solution.
+        Args:
+            xc: x coordinates of nodes. Defaults to random values.
+            yc: y coordinates of nodes. Defaults to random values.
+        """
 
         # Resolve coordinates
         if xc is None:

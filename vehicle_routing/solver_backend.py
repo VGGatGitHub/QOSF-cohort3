@@ -12,7 +12,11 @@ from qiskit import Aer
 
 class SolverBackend:
 
+    """Class containing all backend solvers that may be used to solve the Vehicle Routing Problem."""
+
     def __init__(self, vrp):
+
+        """Initializes required variables and stores the supplied instance of the VehicleRouter object."""
 
         # Store relevant data
         self.vrp = vrp
@@ -29,11 +33,24 @@ class SolverBackend:
 
     def solve(self, solver, **params):
 
+        """Takes the solver as input and redirects control to the corresponding solver.
+        Args:
+            solver: The selected solver.
+            params: Parameters to send to the selected backend solver..
+        """
+
         # Select solver and solve
         solver = self.solvers[solver]
         solver(**params)
 
     def solve_dwave(self, **params):
+
+        """Solve using DWaveSampler and EmbeddingComposite.
+        Args:
+            params: inspect: Defaults to False. Set to True to run D-Wave inspector for the sampled solution.
+            params: post_process: Defaults to False. Set to True to run classical post processing for improving the
+                D-Wave solution.
+        """
 
         # Resolve parameters
         params['solver'] = 'dwave'
@@ -63,6 +80,11 @@ class SolverBackend:
 
     def solve_hybrid(self, **params):
 
+        """Solve using dwave-hybrid.
+        Args:
+            params: Additional parameters that may be required by a solver. Not required here.
+        """
+
         # Resolve parameters
         params['solver'] = 'hybrid'
 
@@ -85,6 +107,11 @@ class SolverBackend:
 
     def solve_leap(self, **params):
 
+        """Solve using Leap Hybrid Sampler.
+        Args:
+            params: Additional parameters that may be required by a solver. Not required here.
+        """
+
         # Resolve parameters
         params['solver'] = 'leap'
 
@@ -98,6 +125,11 @@ class SolverBackend:
         self.vrp.extract_solution(self.result_dict)
 
     def solve_qaoa(self, **params):
+
+        """Solve using qiskit Minimum Eigen Optimizer based on a QAOA backend.
+        Args:
+            params: Additional parameters that may be required by a solver. Not required here.
+        """
 
         # Resolve parameters
         params['solver'] = 'qaoa'

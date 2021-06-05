@@ -10,7 +10,16 @@ from dwave.system import LeapHybridDQMSampler
 
 class NodeClustering:
 
+    """Class for performing node clustering using multilevel maxcut performed via Leap Hybrid DQM Sampler."""
+
     def __init__(self, n_nodes, n_clusters, cost_matrix):
+
+        """Initializes the required variables and stores inputs.
+        Args:
+            n_nodes: No. of nodes.
+            n_clusters: No. of clusters.
+            cost_matrix: n x n matrix describing the cost of moving from node i to node j.
+        """
 
         # Store critical inputs
         self.n = n_nodes
@@ -30,6 +39,8 @@ class NodeClustering:
 
     def rebuild(self):
 
+        """Builds DQM for multi level maxcut."""
+
         # Set variables
         self.variables = np.array([f'x.{i}' for i in range(self.n)])
 
@@ -45,6 +56,8 @@ class NodeClustering:
 
     def solve(self):
 
+        """Solves DQM using Leap Hybrid DQM Sampler."""
+
         # Solve DQM
         sampler = LeapHybridDQMSampler()
         self.result = sampler.sample_dqm(self.dqm)
@@ -54,6 +67,12 @@ class NodeClustering:
         self.solution = np.array([result_dict[var] for var in self.variables])
 
     def visualize(self, xc=None, yc=None):
+
+        """Visualizes output as nodes coloured according to their assigned cluster.
+        Args:
+            xc: x coordinates of nodes. Defaults to random values.
+            yc: y coordinates of nodes. Defaults to random values.
+        """
 
         # Resolve coordinates
         if xc is None:

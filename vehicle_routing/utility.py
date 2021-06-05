@@ -2,6 +2,16 @@ import numpy as np
 
 
 def generate_vrp_instance(n, seed=None):
+
+    """Generate a random VRP instance.
+    Args:
+        n: No. of nodes exclusing depot.
+        seed: Seed value for random number generator. Defaults to None, which sets a random seed.
+    Returns:
+        A list of (n + 1) x coordinates, a list of (n + 1) y coordinates and an (n + 1) x (n + 1) numpy array as the
+        cost matrix.
+    """
+
     # Set seed
     if seed is not None:
         np.random.seed(seed)
@@ -20,6 +30,16 @@ def generate_vrp_instance(n, seed=None):
 
 
 def generate_cvrp_instance(n, m, seed=None):
+
+    """Generate a random CVRP instance.
+    Args:
+        n: No. of nodes exclusing depot.
+        m: No. of vehicles in the problem.
+        seed: Seed value for random number generator. Defaults to None, which sets a random seed.
+    Returns:
+        A list of (n + 1) x coordinates, a list of (n + 1) y coordinates, an (n + 1) x (n + 1) numpy array as the
+        cost matrix, a list of m capacities for the vehicles and a list of n demads for the nodes.
+    """
 
     # Set seed
     if seed is not None:

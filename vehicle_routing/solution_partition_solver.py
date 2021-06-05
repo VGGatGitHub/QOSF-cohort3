@@ -10,7 +10,11 @@ from qiskit_optimization import QuadraticProgram
 
 class SolutionPartitionSolver(VehicleRouter):
 
+    """SPS Solver implementation."""
+
     def __init__(self, n_clients, n_vehicles, cost_matrix, **params):
+
+        """Initializes any required variables and calls init of super class."""
 
         # Initialize cluster data
         self.route = None
@@ -21,6 +25,8 @@ class SolutionPartitionSolver(VehicleRouter):
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
 
     def build_quadratic_program(self):
+
+        """Builds the required quadratic program and sets the names of variables in self.variables."""
 
         # Initialization
         self.qp = QuadraticProgram(name='Vehicle Routing Problem')
@@ -54,6 +60,13 @@ class SolutionPartitionSolver(VehicleRouter):
 
     def solve(self, **params):
 
+        """Add additional functionality to the parent solve function to be able to classically partition the TSP
+        solution after quantum sampling.
+        Args:
+            params: Parameters to send to the selected backend solver. You may also specify the solver to select a
+                different solver and override the specified self.solver.
+        """
+
         # Solve TSP
         super().solve(**params)
 
@@ -77,6 +90,12 @@ class SolutionPartitionSolver(VehicleRouter):
         self.end_indices = list(self.end_indices) + [self.n - 1]
 
     def visualize(self, xc=None, yc=None):
+
+        """Visualizes solution.
+        Args:
+            xc: x coordinates of nodes. Defaults to random values.
+            yc: y coordinates of nodes. Defaults to random values.
+        """
 
         # Resolve coordinates
         if xc is None:
