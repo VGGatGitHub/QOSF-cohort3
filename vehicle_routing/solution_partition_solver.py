@@ -20,6 +20,7 @@ class SolutionPartitionSolver(VehicleRouter):
         self.route = None
         self.start_indices = None
         self.end_indices = None
+        self.partition_cost = None
 
         # Call parent initializer
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
@@ -58,6 +59,16 @@ class SolutionPartitionSolver(VehicleRouter):
             constraint_linear = {f'x.{i}.{j}': 1 for i in range(1, self.n + 1)}
             self.qp.linear_constraint(linear=constraint_linear, sense='==', rhs=1, name=f'single_location_{j}')
 
+    def evaluate_vrp_cost(self):
+
+        """Evaluate the optimized VRP cost under the optimized solution stored in self.solution.
+        Returns:
+            Optimized VRP cost as a float value.
+        """
+
+        # Return optimized energy
+        return super().evaluate_vrp_cost() + self.partition_cost
+
     def solve(self, **params):
 
         """Add additional functionality to the parent solve function to be able to classically partition the TSP
@@ -88,6 +99,7 @@ class SolutionPartitionSolver(VehicleRouter):
         self.start_indices = [0] + list(self.start_indices)
         self.end_indices = np.sort(cut_indices)
         self.end_indices = list(self.end_indices) + [self.n - 1]
+        self.partition_cost = sum(partition_costs[cut_indices])
 
     def visualize(self, xc=None, yc=None):
 

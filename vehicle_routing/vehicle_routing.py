@@ -6,10 +6,10 @@ from functools import partial
 from solver_backend import SolverBackend
 from dwave.embedding.chain_strength import uniform_torque_compensation
 from qiskit_optimization.converters import QuadraticProgramToQubo
+from qiskit_optimization.algorithms import OptimizationResult
 
 
 class VehicleRouter:
-
     """Abstract Class for solving the Vehicle Routing Problem. To build a VRP solver, simply inherit from this class
     and overide the build_quadratic_program function in this class."""
 
@@ -117,39 +117,18 @@ class VehicleRouter:
         # Reshape result
         self.solution = self.solution.reshape(self.variables.shape)
 
-    def evaluate_qubo_cost(self, data=None):
+    def evaluate_vrp_cost(self):
 
-        """Evaluate the cost of the QUBO using the supplied data as the values of the variables. If this data is not
-        supplied, the self.solution variable is used instead.
-        Args:
-            data: Values of the variables in the solution to be tested. Defaults to self.solution.
+        """Evaluate the optimized VRP cost under the optimized solution stored in self.solution.
         Returns:
-            Evaluated QUBO cost as a float value.
+            Optimized VRP cost as a float value.
         """
 
-        # Resolve data
-        if data is None:
-            data = self.solution.reshape(-1)
+        # Return optimized energy
+        if type(self.result) == OptimizationResult:
+            return self.result.fval
         else:
-            data = np.array(data).reshape(-1)
-
-        # Resolve variables
-        var_list = self.variables.reshape(-1)
-        data_dict = {var_list[i]: data[i] for i in range(len(data))}
-
-        # Extract Q matrix
-        Q = self.qubo.objective.quadratic.to_array()
-        g = np.array([self.qubo.objective.linear.to_array()])
-        c = self.qubo.objective.constant
-
-        # Build input vector
-        x = np.zeros((self.qubo.get_num_binary_vars(), 1))
-        for var, i in self.qubo.variables_index.items():
-            x[i, 0] = data_dict[var]
-
-        # Evaluate output
-        cost = np.dot(g, x) + np.dot(np.dot(np.transpose(x), Q), x) + c
-        return cost[0][0]
+            return self.result.first.energy
 
     def evaluate_qubo_feasibility(self, data=None):
 
