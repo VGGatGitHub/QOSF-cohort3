@@ -102,7 +102,7 @@ class VehicleRouter:
 
     def extract_solution(self, result_dict):
 
-        """Uses a result dictionsry mapping variable names to the solved solution to build the self.solution variable
+        """Uses a result dictionary mapping variable names to the solved solution to build the self.solution variable
         in the same shape as self.variables and containing the corresponding solutions.
         Args:
             result_dict: Dictionary mapping variable names to solved values for these variables.
