@@ -22,7 +22,7 @@ def generate_vrp_instance(n, seed=None):
     instance = np.zeros((n + 1, n + 1))
     for ii in range(n + 1):
         for jj in range(ii + 1, n + 1):
-            instance[ii, jj] = np.sqrt((xc[ii] - xc[jj]) ** 2 + (yc[ii] - yc[jj]) ** 2)
+            instance[ii, jj] = (xc[ii] - xc[jj]) ** 2 + (yc[ii] - yc[jj]) ** 2
             instance[jj, ii] = instance[ii, jj]
 
     # Return output
