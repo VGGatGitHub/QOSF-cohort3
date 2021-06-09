@@ -1,5 +1,4 @@
-
-New 
-VGG
-
-Aniket
+# An Exploration of the Vehicle Routing Problem
+* VGG
+* Aniket
+* Avneesh
