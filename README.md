@@ -42,6 +42,6 @@ The sub directory [Performance_Comparision](https://github.com/VGGatGitHub/QOSF-
 
 ## YouTube Tutorials
 Description
-- playlist link
+- playlist link coming soon!
 
 ## References
