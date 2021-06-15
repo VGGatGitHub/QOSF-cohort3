@@ -1,4 +1,4 @@
-# Project 1: An Exploration of the Vehicle Routing Problem
+# Main Project: An Exploration of the Vehicle Routing Problem
 
 ## Table of Contents 
 
