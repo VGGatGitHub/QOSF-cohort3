@@ -38,10 +38,22 @@ The sub directory [Performance_Comparision](https://github.com/VGGatGitHub/QOSF-
   - Navigate to the [***Vehicle Routing.ipynb***](https://github.com/VGGatGitHub/QOSF-cohort3/blob/main/vehicle_routing/Vehicle%20Routing%20Problem.ipynb) notebook in the vehicle_routing directory, and run the first cell. The Leap IDE will direct the user to install jupyter server and other data science tools.
 - [***Vehicle Routing.ipynb***](https://github.com/VGGatGitHub/QOSF-cohort3/blob/main/vehicle_routing/Vehicle%20Routing%20Problem.ipynb) notebook in the vehicle_routing directory has examples on how to use the code for solving vehicle routing problem using different solvers and backends.
 
-### On Local System 
+### On Local System
+- It is recommended to use a seperate conda environment for the project, although this is not necessary. Visit the [anaconda installation page](https://docs.anaconda.com/anaconda/install) for more info.
+- You need access to a D-Wave leap account. Visit the [leap sign-up page](https://www.dwavesys.com/take-leap) for signing up.
+- Install the following python packages
+  - pip install qiskit
+  - pip install qiskit-optimization
+  - pip install dwave-ocean-sdk
+- Run dwave setup on your terminal and follow through the steps in the [D-Wave Getting Started Guide](https://docs.ocean.dwavesys.com/en/stable/overview/install.html)
+- Clone the repo to your system and run whichever solver you want. [***Vehicle Routing.ipynb***](https://github.com/VGGatGitHub/QOSF-cohort3/blob/main/vehicle_routing/Vehicle%20Routing%20Problem.ipynb) notebook in the vehicle_routing directory has examples on how to use the code for solving vehicle routing problem using different solvers and backends.
 
 ## YouTube Tutorials
 Description
 - playlist link coming soon!
 
 ## References
+1. Feld, Sebastian, et al. "A hybrid solution method for the capacitated vehicle routing problem using a quantum annealer." Frontiers in ICT 6 (2019): 13.
+2. Lucas, Andrew. "Ising formulations of many NP problems." Frontiers in Physics 2 (2014): 5.
+3. Borowski, Michał, et al. "New Hybrid Quantum Annealing Algorithms for Solving Vehicle Routing Problem." International Conference on Computational Science. Springer, Cham, 2020.
+4. Irie, Hirotaka, et al. "Quantum annealing of vehicle routing problem with time, state and capacity." International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.
