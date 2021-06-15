@@ -21,6 +21,8 @@ The vehicle_routing directory contains the core solvers for solving the Vehicle 
 
 The sub directory [Performance_Comparision](https://github.com/VGGatGitHub/QOSF-cohort3/tree/main/vehicle_routing/Performance_Comparisons) in the vehicle_routing directory has jupyter notebooks displaying classical cpu runtimes and quantum processing unit (qpu) runtimes for various quantum algorithms.
 
+The submodule [***Maxcut***](https://github.com/VectorBolt/Maxcut/tree/2194acace6a63d777e8d6bcb16617f64ffb419fb) is an exploration of the Maxcut problem, which we looked at prior to the Vehicle Routing Problem. A generalized version of this was used in the Clustered TSP Solver, which was one of the algorithms used for solving the vehicle routing problem.
+
 ## Technologies
 - Python 3
 - Qiskit
