@@ -29,6 +29,7 @@ The submodule [***Maxcut***](https://github.com/VectorBolt/Maxcut/tree/2194acace
 - Qiskit-optimization
 - D-Wave Leap
 - D-Wave Ocean SDK
+- Manim Community Edition
 
 ## How To Use
 ### On D-Wave Leap
