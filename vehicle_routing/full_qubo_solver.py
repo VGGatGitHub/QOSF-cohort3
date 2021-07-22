@@ -102,3 +102,31 @@ class FullQuboSolver(VehicleRouter):
         # Show plot
         plt.grid(True)
         plt.show()
+
+
+class CapcFullQuboSolver(FullQuboSolver):
+
+    """Capacitated FQS Solver implementation."""
+
+    def __init__(self, n_clients, n_vehicles, cost_matrix, capacity, demand, **params):
+
+        """Initializes any required variables and calls init of super class."""
+
+        # Store capacity data
+        self.capacity = capacity
+        self.demand = demand
+
+        # Call parent initializer
+        super().__init__(n_clients, n_vehicles, cost_matrix, **params)
+
+    def build_quadratic_program(self):
+
+        """Builds the required quadratic program and sets the names of variables in self.variables."""
+
+        # Build quadratic program without capacity
+        super().build_quadratic_program()
+
+        # Add capacity constraints
+        for i in range(self.m):
+            constraint = {self.variables[i, j + 1, k]: self.demand[j] for j in range(self.n) for k in range(self.n)}
+            self.qp.linear_constraint(linear=constraint, sense='<=', rhs=self.capacity[i], name=f'capacity_{i}')

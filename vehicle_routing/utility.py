@@ -54,8 +54,8 @@ def generate_cvrp_instance(n, m, seed=None):
     capacities = 4 * capacities * sum(demands) / sum(capacities)
 
     # Floor data
-    demands = np.floor(demands)
-    capacities = np.floor(capacities)
+    demands = np.floor(demands).astype(int)
+    capacities = np.floor(capacities).astype(int)
 
     # Return output
     return instance, xc, yc, capacities, demands
