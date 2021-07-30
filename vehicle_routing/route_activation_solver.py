@@ -88,3 +88,37 @@ class RouteActivationSolver(VehicleRouter):
         # Show plot
         plt.grid(True)
         plt.show()
+
+
+class CapcRouteActivationSolver(RouteActivationSolver):
+
+    """Capacitated RAS Solver implementation."""
+
+    def __init__(self, n_clients, n_vehicles, cost_matrix, capacity, demand, **params):
+
+        """Initializes any required variables and calls init of super class."""
+
+        # Store capacity data
+        self.capacity = capacity
+        self.demand = demand
+
+        # Call parent initializer
+        super().__init__(n_clients, n_vehicles, cost_matrix, **params)
+
+    def build_quadratic_program(self):
+
+        """Builds the required quadratic program and sets the names of variables in self.variables."""
+
+        # Build quadratic program without capacity
+        super().build_quadratic_program()
+
+        # Add MTZ variables
+        for i in range(1, self.n + 1):
+            self.qp.integer_var(name=f'u.{i}', lowerbound=self.demand[i - 1], upperbound=self.capacity)
+
+        # Add mtz capacity constraints
+        edgelist = [(i, j) for i, j in product(range(1, self.n + 1), repeat=2) if i != j]
+        for i, j in edgelist:
+            constraint = {f'u.{i}': 1, f'u.{j}': -1, f'x.{i}.{j}': self.capacity}
+            rhs = self.capacity - self.demand[j - 1]
+            self.qp.linear_constraint(linear=constraint, sense='<=', rhs=rhs, name=f'mtz_{i}_{j}')
