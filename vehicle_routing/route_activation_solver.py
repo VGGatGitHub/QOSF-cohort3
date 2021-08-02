@@ -122,3 +122,8 @@ class CapcRouteActivationSolver(RouteActivationSolver):
             constraint = {f'u.{i}': 1, f'u.{j}': -1, f'x.{i}.{j}': self.capacity}
             rhs = self.capacity - self.demand[j - 1]
             self.qp.linear_constraint(linear=constraint, sense='<=', rhs=rhs, name=f'mtz_{i}_{j}')
+
+    def evaluate_qubo_feasibility(self, data=None):
+
+        """This function is not supported due to additional MTZ variables."""
+        print("Not Supported due to integer valued MTZ variables!")

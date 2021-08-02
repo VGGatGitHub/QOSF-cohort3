@@ -100,3 +100,49 @@ class NodeClustering:
         # Show plot
         plt.grid(True)
         plt.show()
+
+
+class CapcNodeClustering(NodeClustering):
+
+    """Class for performing caoacitated node clustering using multilevel maxcut performed via Leap
+    Hybrid DQM Sampler."""
+
+    def __init__(self, n_nodes, n_clusters, cost_matrix, capacity, value, **params):
+
+        """Initializes the required variables and stores inputs.
+        Args:
+            n_nodes: No. of nodes.
+            n_clusters: No. of clusters.
+            cost_matrix: n x n matrix describing the cost of moving from node i to node j.
+            capacity: List of cluster capacities.
+            value: List of node values.
+            penalty: Lagrange multiplier for capacity constraints.
+        """
+
+        # Store capacity data
+        self.capacity = capacity
+        self.value = value
+
+        # Store parameters
+        self.penalty = params.setdefault('penalty', 1e5)
+
+        # Call parent initializer
+        super().__init__(n_nodes, n_clusters, cost_matrix)
+
+    def rebuild(self):
+
+        """Builds DQM for capacitated multi level maxcut."""
+
+        # Build multilevel maxcut DQM
+        super().rebuild()
+
+        # Add capacity slack variables
+        for i in range(self.k):
+            self.dqm.add_variable(self.capacity[i], label=f'c.{i}')
+
+        # Add capacity constraints
+        for i in range(self.k):
+            terms = [(f'x.{j}', i, self.value[j]) for j in range(self.n)]
+            terms += [(f'c.{i}', j, j) for j in range(self.capacity[i])]
+            constant = -self.capacity[i]
+            self.dqm.add_linear_equality_constraint(terms, self.penalty, constant)

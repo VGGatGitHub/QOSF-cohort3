@@ -8,6 +8,7 @@ from collections import Counter
 from matplotlib.colors import rgb2hex
 from vehicle_routing import VehicleRouter
 from node_clustering import NodeClustering
+from node_clustering import CapcNodeClustering
 from qiskit_optimization import QuadraticProgram
 
 
@@ -26,18 +27,23 @@ class ClusteredTspSolver(VehicleRouter):
         # Call parent initializer
         super().__init__(n_clients, n_vehicles, cost_matrix, **params)
 
+    def build_clusters(self):
+
+        """Sets up clusters for tsp solver."""
+
+        # Cluster nodes and time execution
+        self.cluster = NodeClustering(self.n, self.m, self.cost[1:, 1:])
+        self.cluster.solve()
+        self.cluster_dict = {i: [j + 1 for j in range(self.n) if self.cluster.solution[j] == i] for i in range(self.m)}
+        self.timing['clustering_time'] = self.cluster.result.info
+
     def build_quadratic_program(self):
 
         """Builds the required quadratic program and sets the names of variables in self.variables. Also runs
         clustering prior to building quadratic program."""
 
-        # Cluster nodes
-        self.cluster = NodeClustering(self.n, self.m, self.cost[1:, 1:])
-        self.cluster.solve()
-        self.cluster_dict = {i: [j + 1 for j in range(self.n) if self.cluster.solution[j] == i] for i in range(self.m)}
-
-        # Record cluster timing and reinitialize clock
-        self.timing['clustering_time'] = self.cluster.result.info
+        # Build clusters and reinitialize clock
+        self.build_clusters()
         self.clock = time.time()
 
         # Initialization
@@ -141,3 +147,29 @@ class ClusteredTspSolver(VehicleRouter):
         # Show plot
         plt.grid(True)
         plt.show()
+
+
+class CapcClusteredTspSolver(ClusteredTspSolver):
+
+    """Capacitated CTS Solver implementation."""
+
+    def __init__(self, n_clients, n_vehicles, cost_matrix, capacity, demand, **params):
+
+        """Initializes any required variables and calls init of super class."""
+
+        # Store capacity data
+        self.capacity = capacity
+        self.demand = demand
+
+        # Call parent initializer
+        super().__init__(n_clients, n_vehicles, cost_matrix, **params)
+
+    def build_clusters(self):
+
+        """Sets up capacitated clusters for tsp solver."""
+
+        # Cluster nodes and time execution
+        self.cluster = CapcNodeClustering(self.n, self.m, self.cost[1:, 1:], self.capacity, self.demand)
+        self.cluster.solve()
+        self.cluster_dict = {i: [j + 1 for j in range(self.n) if self.cluster.solution[j] == i] for i in range(self.m)}
+        self.timing['clustering_time'] = self.cluster.result.info

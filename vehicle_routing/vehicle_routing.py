@@ -40,7 +40,6 @@ class VehicleRouter:
         self.chain_strength = params.setdefault('chain_strength', partial(uniform_torque_compensation, prefactor=2))
         self.num_reads = params.setdefault('num_reads', 1000)
         self.solver = params.setdefault('solver', 'dwave')
-        self.formulation = params.setdefault('formulation', 'FQS')
 
         # Initialize quadratic structures
         self.qp = None
@@ -165,13 +164,3 @@ class VehicleRouter:
 
         # Solve
         self.backend.solve(**params)
-
-    def save_data(self, filename=None):
-
-        """Save relevant results to disk
-        Args:
-            filename: Name of file to save to.
-        """
-
-        # Resolve file name
-        filename = 'data/' + self.formulation if filename is None else 'data/' + filename
