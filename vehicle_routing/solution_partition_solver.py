@@ -144,3 +144,72 @@ class SolutionPartitionSolver(VehicleRouter):
         # Show plot
         plt.grid(True)
         plt.show()
+
+
+class CapcSolutionPartitionSolver(SolutionPartitionSolver):
+
+    """Capacitated SPS Solver implementation."""
+
+    def __init__(self, n_clients, n_vehicles, cost_matrix, capacity, demand, **params):
+
+        """Initializes any required variables and calls init of super class."""
+
+        # Store capacity data
+        self.capacity = capacity
+        self.demand = demand
+
+        # Call parent initializer
+        super().__init__(n_clients, n_vehicles, cost_matrix, **params)
+
+    def build_partition_graph(self):
+
+        """Build partition graph for post TSP partitioning."""
+
+        # Initialize graph
+        G = nx.DiGraph()
+        G.add_nodes_from(range(self.n + 1))
+
+        # Loop over nodes
+        for i in range(self.n + 1):
+
+            # Initialize
+            j = i + 1
+            demand = self.demand[self.route[j - 1] - 1] if j <= self.n else None
+            cost = self.cost[0, self.route[j - 1]] if j <= self.n else None
+
+            # Loop over target nodes
+            while j <= self.n and demand <= self.capacity:
+                trip_cost = cost + self.cost[self.route[j - 1], 0]
+                G.add_edge(i, j, weight=trip_cost)
+                j += 1
+                if j <= self.n:
+                    demand += self.demand[self.route[j - 1] - 1]
+                    cost += self.cost[self.route[j - 2], self.route[j - 1]]
+
+        # Return graph
+        return G
+
+    def solve(self, **params):
+
+        """Add additional functionality to the parent solve function to be able to classically partition the TSP
+        solution after quantum sampling.
+        Args:
+            params: Parameters to send to the selected backend solver. You may also specify the solver to select a
+                different solver and override the specified self.solver.
+        """
+
+        # Solve TSP
+        VehicleRouter.solve(self, **params)
+
+        # Evaluate route
+        var_list = self.variables.reshape(-1)
+        sol_list = self.solution.reshape(-1)
+        active_vars = [var_list[k] for k in range(len(var_list)) if sol_list[k] == 1]
+        self.route = [int(var.split('.')[1]) for var in active_vars]
+
+        # Evaluate minimum cost partition
+        G = self.build_partition_graph()
+        path_length, path = nx.single_source_dijkstra(G, source=0, target=self.n)
+        self.start_indices = path[:-1]
+        self.end_indices = [j - 1 for j in path[1:]]
+        self.partition_cost = path_length - VehicleRouter.evaluate_vrp_cost(self)
