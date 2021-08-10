@@ -1,9 +1,0 @@
-<routes>
-	<vType id="vrp_truck" vClass="truck" color="0,0,1"/>
-	<trip id="vrptruck_0_0" type="vrp_truck" depart="0.00" departLane="best" from="-168940071#1" to="-168940071#1" via="4610479#0"/>
-	<trip id="vrptruck_0_1" type="vrp_truck" depart="0.00" departLane="best" from="-168940071#1" to="-168940071#1" via="171826984#2 234463931#2"/>
-	<trip id="vrptruck_1_0" type="vrp_truck" depart="1200.00" departLane="best" from="-168940071#1" to="-168940071#1" via="4610479#0"/>
-	<trip id="vrptruck_1_1" type="vrp_truck" depart="1200.00" departLane="best" from="-168940071#1" to="-168940071#1" via="171826984#2 234463931#2"/>
-	<trip id="vrptruck_2_0" type="vrp_truck" depart="2400.00" departLane="best" from="-168940071#1" to="-168940071#1" via="4610479#0"/>
-	<trip id="vrptruck_2_1" type="vrp_truck" depart="2400.00" departLane="best" from="-168940071#1" to="-168940071#1" via="171826984#2 234463931#2"/>
-</routes>
