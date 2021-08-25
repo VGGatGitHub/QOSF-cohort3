@@ -188,6 +188,44 @@ class CapcSolutionPartitionSolver(SolutionPartitionSolver):
 
         # Return graph
         return G
+    
+    def shortest_walk(self, dG, sink, m):
+    # d(v,m) is the shortest walk length from source(0) to v using at most m edges
+    
+        n = dG.number_of_nodes() - 1
+        d = [float('inf')]*(n+1) 
+        path = [None]*(n+1) #store path to v with atmost m edges
+        path[0] = [0]
+        d[0] = 0   # d(0,0) = 0
+
+        d_nextround= [float('inf')]*(n+1)
+        d_nextround[0]=0
+        path_nextround = [None]*(n+1) 
+        path_nextround[0] = [0]
+
+        for i in range(m):
+        
+            for v in range(1,n+1):
+                
+                path_dists = [(u,d[u]+dG.edges[u,v]['weight']) for u in dG.predecessors(v)]
+                
+                min_path_dists = min(dist for (vertex, dist) in path_dists)
+                if min_path_dists < d[v]:
+                    d_nextround[v] =  min_path_dists
+                    for (vertex, dist) in path_dists:
+                        if dist==min_path_dists:
+                            path_nextround[v] = path[int(vertex)]+[v]
+                else:
+                    d_nextround[v] = d[v]
+                    path_nextround[v] = path[v]
+            d = d_nextround.copy()
+            path = path_nextround.copy()
+            
+        if(d[sink]==float('inf')):
+            return (0, None, None)
+        else:
+            path_length=d[sink]
+            return (1, path_length, path[sink])
 
     def solve(self, **params):
 
@@ -209,7 +247,7 @@ class CapcSolutionPartitionSolver(SolutionPartitionSolver):
 
         # Evaluate minimum cost partition
         G = self.build_partition_graph()
-        path_length, path = nx.single_source_dijkstra(G, source=0, target=self.n)
+        success, path_length, path = self.shortest_walk(G, self.n, self.m)
         self.start_indices = path[:-1]
         self.end_indices = [j - 1 for j in path[1:]]
         self.partition_cost = path_length - VehicleRouter.evaluate_vrp_cost(self)
