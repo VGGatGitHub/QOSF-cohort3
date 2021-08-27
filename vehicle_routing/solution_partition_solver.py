@@ -1,6 +1,6 @@
+import warnings
 import numpy as np
 import networkx as nx
-import warnings as warn
 import matplotlib.pyplot as plt
 
 from itertools import product
@@ -132,7 +132,7 @@ class SolutionPartitionSolver(VehicleRouter):
         nx.draw_networkx_labels(G, pos=pos, labels=labels, font_size=16)
 
         # Loop through cars
-        for i in range(self.m):
+        for i in range(len(self.start_indices)):
 
             # Extract edge list
             route = [self.route[j] for j in range(self.start_indices[i], self.end_indices[i] + 1)]
@@ -261,7 +261,7 @@ class CapcSolutionPartitionSolver(SolutionPartitionSolver):
         G = self.build_partition_graph()
         success, path_length, path = self.shortest_walk(G, self.n, self.m)
         if not success:
-            warn.warn('Unable to find route with given number of vehicles. Extending fleet...')
+            warnings.warn('Unable to find route with given number of vehicles. Extending fleet...')
             path_length, path = nx.single_source_dijkstra(G, source=0, target=self.n)
 
         # Extract cuts from partition
